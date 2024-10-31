@@ -1,0 +1,4 @@
+1. configurations for different parameters are stored in "configs" directory.
+2. outputs of each configurations is stored in "outputs" directory. file name is in the format mesh_{x dimension}x{y_dimension}_{use_winoc}_{flit_size}
+3. important results of each simulator execution is stored as json and csv in result.json and result.csv respectively.
+4. simulator can be executed on a configuration using the command :  noxim -config ./configs/mesh50x50_True_128.yaml

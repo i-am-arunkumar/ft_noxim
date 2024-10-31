@@ -1,0 +1,6 @@
+{
+    "cmake.sourceDirectory": "/mnt/axrun_data/career/M.Tech/Semester 1/CS701 - High performance Computing/Lab/noxim/bin/libs/yaml-cpp/test/gtest-1.8.0",
+    "files.associations": {
+        "iostream": "cpp"
+    }
+}
