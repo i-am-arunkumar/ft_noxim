@@ -1,16 +1,15 @@
 #!/bin/bash
 
 dimx_start=4
-dimx_end=64
+dimx_end=32
 dimy_start=4
-dimy_end=64
+dimy_end=32
 buffer_sizes=(4 8 16)
 packet_size_min=2
 packet_size_max=20
 routing_types=("FT_ODD_EVEN")
 # selection_strategies=("random" "bufferlevel" "nop")  # Various selection strategies
-traffic_types=("random" )
-#"transpose1" "transpose2" "bitreversal" "butterfly")  # More traffic types
+traffic_types=("random" "transpose1" "transpose2" "bitreversal" "butterfly")  # More traffic types
 simulation_time=$(seq 21000 1000 40000) # Short simulation time to speed up testing
 fault_rate=$(seq 0.001 0.001 0.009)
 pir=$(seq 0.001 0.001 0.009)
@@ -53,23 +52,23 @@ commands=()
 
 # Generate samples for powers of two for x and y dimensions
 for ((dimx = dimx_start; dimx <= dimx_end; dimx *= 2)); do
-  for ((dimy = dimy_start; dimy <= dimy_end; dimy *= 2)); do
+  #for ((dimy = dimy_start; dimy <= dimy_end; dimy *= 2)); do
     for buffer in "${buffer_sizes[@]}"; do
       for injection_rate in $pir; do
         for routing in "${routing_types[@]}"; do
           for traffic in "${traffic_types[@]}"; do
             for fault in $fault_rate; do
               for sim_time in $simulation_time; do
-                inputs="$sim_time,$dimx,$dimy,$buffer,$routing,$traffic,$injection_rate,$fault"
-                commands+=("$inputs noxim -config default_config.yaml  -dimx $dimx -dimy $dimy -buffer $buffer -routing $routing -pir $injection_rate poisson -fault $fault -sim $sim_time")                            
+              	sample=$((sample + 1))
+                inputs="$sim_time,$dimx,$dimx,$buffer,$routing,$traffic,$injection_rate,$fault"
+                commands+=("$sample,$inputs noxim -config default_config.yaml  -dimx $dimx -dimy $dimx -buffer $buffer -routing $routing -pir $injection_rate poisson -fault $fault -sim $sim_time -traffic $traffic")                            
               done
             done
           done
         done
       done
     done
-  done
-
+  #done
 done
 
 echo "Samples count : ${#commands[@]}"
@@ -96,7 +95,8 @@ printf "%s\n" "${commands[@]}" > commands.txt
 
 echo "Created commands.txt file"
 
-cat commands.txt | parallel -N 128 --halt now,fail=1 run_command
+#cat commands.txt | parallel -N 128 --halt now,fail=1 run_command
+cat commands.txt | parallel -N 128 run_command
 #printf "%s\n" "${commands[@]}" | parallel -N 128 --halt now,fail=1 run_command
 
 
